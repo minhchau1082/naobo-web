@@ -10,7 +10,7 @@ from urllib.parse import urlparse, parse_qs
 # Configuration
 DB_PATH = "brain.db"
 PORT = int(os.environ.get("PORT", 8080))  # Tự động nhận PORT từ Render/Hosting
-ADMIN_HTML_PATH = "admin.html"
+ADMIN_HTML_PATH = "admin/index.html"
 CHECKOUT_HTML_PATH = "checkout.html"
 # MẬT MÃ BẢO MẬT WEBHOOK (Bạn cần điền mã này vào SePay)
 SEPAY_WEBHOOK_TOKEN = "naobokhoemanh_secret_2024"
@@ -84,11 +84,10 @@ class AdminHandler(BaseHTTPRequestHandler):
             return
 
         # API Handlers
-        conn = sqlite3.connect(DB_PATH)
-        conn.row_factory = sqlite3.Row
-        cursor = conn.cursor()
-
         try:
+            conn = sqlite3.connect(DB_PATH)
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
             if path == '/api/products' or path == '/api/public/products':
                 cursor.execute("SELECT id, name, price, quantity, description FROM products WHERE quantity > 0 ORDER BY id DESC")
                 data = [dict(row) for row in cursor.fetchall()]
@@ -125,9 +124,10 @@ class AdminHandler(BaseHTTPRequestHandler):
             else:
                 self.send_error(404)
         except Exception as e:
+            print(f"Error handling GET {path}: {str(e)}")
             self._send_response({"error": str(e)}, 500)
         finally:
-            conn.close()
+            if 'conn' in locals(): conn.close()
 
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])
@@ -137,10 +137,9 @@ class AdminHandler(BaseHTTPRequestHandler):
         parsed_path = urlparse(self.path)
         path = parsed_path.path
 
-        conn = sqlite3.connect(DB_PATH)
-        cursor = conn.cursor()
-        
         try:
+            conn = sqlite3.connect(DB_PATH)
+            cursor = conn.cursor()
             if path == '/api/products':
                 if payload.get('id'): # Edit
                     cursor.execute("UPDATE products SET name=?, price=?, quantity=?, description=? WHERE id=?",
@@ -232,10 +231,11 @@ class AdminHandler(BaseHTTPRequestHandler):
             else:
                 self.send_error(404)
         except Exception as e:
-            conn.rollback()
+            print(f"Error handling POST {path}: {str(e)}")
+            if 'conn' in locals(): conn.rollback()
             self._send_response({"error": str(e)}, 500)
         finally:
-            conn.close()
+            if 'conn' in locals(): conn.close()
 
 def run_server():
     # Force UTF-8 for console output on Windows
