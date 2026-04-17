@@ -460,17 +460,14 @@
                     </tr>`;
                 });
             } else if (currentTab === 'customers') {
-                thead.innerHTML = `<tr><th>Khách hàng</th><th>Liên hệ</th><th>Thông tin thêm</th><th>Hành động</th></tr>`;
+                thead.innerHTML = `<tr><th>Khách hàng</th><th>SĐT</th><th>Email</th><th>Thông tin thêm</th><th>Hành động</th></tr>`;
                 items.forEach(item => {
-                    tbody.innerHTML += `<tr>
                         <td>
                             <div style="font-weight: 600">${item.name}</div>
                             <div style="font-size: 13px; color: var(--text-muted)">ID: #${item.id}</div>
                         </td>
-                        <td>
-                            <div>${item.phone}</div>
-                            <div style="font-size: 13px; color: var(--text-muted)">${item.email || '-'}</div>
-                        </td>
+                        <td>${item.phone}</td>
+                        <td style="font-size: 14px; color: var(--text-muted)">${item.email || '-'}</td>
                         <td><div style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-muted)">${item.notes || '-'}</div></td>
                         <td>
                             <div style="display: flex; gap: 8px">
