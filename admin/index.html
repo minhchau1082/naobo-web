@@ -366,10 +366,16 @@
         <div class="card">
             <div class="card-header">
                 <h2 class="card-title" id="tabTitle">Quản lý Sản phẩm</h2>
-                <button class="btn btn-primary" onclick="showModal()">
-                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                    Thêm mới
-                </button>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-secondary" id="syncBtn" style="display: none;" onclick="syncGSheet()">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        Đồng bộ Sheets
+                    </button>
+                    <button class="btn btn-primary" onclick="showModal()">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        Thêm mới
+                    </button>
+                </div>
             </div>
             
             <div style="overflow-x: auto;">
@@ -407,17 +413,19 @@
         async function fetchData() {
             try {
                 const res = await fetch(window.APP_CONFIG.API_BASE_URL + `/api/${currentTab}`);
+                if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
                 items = await res.json();
                 renderTable();
             } catch (err) { 
-                showToast('Lỗi khi tải dữ liệu!', 'danger');
+                console.error('Fetch error:', err);
+                showToast('Lỗi khi tải dữ liệu! ' + err.message, 'danger');
             }
         }
 
         function switchTab(tab, e) {
             currentTab = tab;
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            e.target.classList.add('active');
+            if (e && e.target) e.target.classList.add('active');
             
             const titles = {
                 'products': 'Quản lý Sản phẩm',
@@ -425,6 +433,7 @@
                 'orders': 'Lịch sử Đơn hàng'
             };
             document.getElementById('tabTitle').innerText = titles[tab];
+            document.getElementById('syncBtn').style.display = tab === 'customers' ? 'inline-flex' : 'none';
             fetchData();
         }
 
@@ -474,13 +483,14 @@
             } else if (currentTab === 'orders') {
                 thead.innerHTML = `<tr><th>ID</th><th>Khách hàng</th><th>Sản phẩm</th><th>Tổng tiền</th><th>Trạng thái</th><th>Hành động</th></tr>`;
                 items.forEach(item => {
-                    const statusClass = item.status === 'confirmed' ? 'tag-success' : (item.status === 'pending' ? 'tag-pending' : 'tag-danger');
+                    const statusText = (item.status || 'pending').toUpperCase();
+                    const statusClass = (statusText === 'SUCCESS' || statusText === 'CONFIRMED') ? 'tag-success' : (statusText === 'PENDING' ? 'tag-pending' : 'tag-danger');
                     tbody.innerHTML += `<tr>
                         <td style="color: var(--text-muted)">#${item.id}</td>
                         <td style="font-weight: 600">${item.customer_name || 'Khách lạ'}</td>
                         <td>${item.product_name || 'SP đã xóa'}</td>
                         <td class="price">${(item.amount || 0).toLocaleString()}đ</td>
-                        <td><span class="tag ${statusClass}">${item.status}</span></td>
+                        <td><span class="tag ${statusClass}">${statusText}</span></td>
                         <td>
                             <div style="display: flex; gap: 8px">
                                 <button class="btn btn-secondary" onclick="editItem(${item.id})">Sửa</button>
@@ -586,16 +596,25 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
-                const result = await res.json();
-                if (result.success) {
+                
+                let result;
+                try { 
+                    result = await res.json();
+                } catch(e) {
+                    throw new Error('Server không trả về JSON hợp lệ');
+                }
+
+                if (res.ok && result.success) {
                     showToast(e.target.dataset.id ? 'Đã cập nhật thành công!' : 'Đã thêm thành công!', 'success');
                     hideModal();
                     fetchData();
                 } else {
-                    showToast(result.error || 'Thao tác thất bại!', 'danger');
+                    const errorMsg = result.error || 'Thao tác thất bại!';
+                    showToast('Lỗi: ' + errorMsg, 'danger');
                 }
             } catch (err) {
-                showToast('Lỗi kết nối máy chủ!', 'danger');
+                console.error('Save error:', err);
+                showToast('Lỗi kết nối máy chủ! ' + err.message, 'danger');
             }
         };
 
@@ -608,14 +627,15 @@
                     body: JSON.stringify({ table: currentTab, id: id })
                 });
                 const result = await res.json();
-                if (result.success) {
+                if (res.ok && result.success) {
                     showToast('Đã xóa dữ liệu thành công.', 'success');
                     fetchData();
                 } else {
-                    showToast('Lỗi khi xóa dữ liệu!', 'danger');
+                    showToast(result.error || 'Lỗi khi xóa dữ liệu!', 'danger');
                 }
             } catch (err) {
-                showToast('Lỗi kết nối!', 'danger');
+                console.error('Delete error:', err);
+                showToast('Lỗi kết nối! ' + err.message, 'danger');
             }
         }
 
@@ -636,6 +656,29 @@
                 toast.style.transform = 'translateX(100%)';
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
+        }
+
+        async function syncGSheet() {
+            const btn = document.getElementById('syncBtn');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = 'Đang đồng bộ...';
+            
+            try {
+                const res = await fetch(window.APP_CONFIG.API_BASE_URL + '/api/sync-gsheet');
+                const result = await res.json();
+                if (result.success) {
+                    showToast(result.message, 'success');
+                    fetchData();
+                } else {
+                    showToast(result.error || 'Đồng bộ thất bại!', 'danger');
+                }
+            } catch (err) {
+                showToast('Lỗi kết nối máy chủ!', 'danger');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
         }
 
         // Initialize
