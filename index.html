@@ -3,403 +3,643 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tái Lập Não Bộ Trong 5 Ngày - Hết "Gồng" & Chữa Lành</title>
-    
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Chương trình đồng hành 5 ngày dựa trên khoa học thần kinh giúp bạn làm dịu não bộ, giảm căng thẳng và tìm lại sự bình yên vốn có. Giá chỉ 99k.">
-    <meta name="keywords" content="tái lập não bộ, làm dịu não, giảm căng thẳng, chữa lành, ebook, khoa học thần kinh">
-    
-    <!-- Fonts: Be Vietnam Pro cho tiếng Việt siêu đẹp và dễ đọc -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Styles -->
-    <link rel="stylesheet" href="./style.css">
+    <title>Admin Dashboard | NaoBoKhoManh</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #818cf8;
+            --primary-hover: #6366f1;
+            --bg: #030712;
+            --surface: rgba(17, 24, 39, 0.7);
+            --border: rgba(255, 255, 255, 0.1);
+            --text: #f9fafb;
+            --text-muted: #9ca3af;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --glass: rgba(255, 255, 255, 0.03);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 40px 20px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--success);
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--success);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            background: var(--glass);
+            padding: 6px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 24px;
+            width: fit-content;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 10px 24px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tab-btn:hover {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Card & Table */
+        .card {
+            background: var(--surface);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--glass);
+            border-color: var(--border);
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-danger:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 16px;
+            color: var(--text-muted);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+        }
+
+        td {
+            padding: 20px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            font-size: 15px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        .tag {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .tag-success { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .tag-pending { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .tag-danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        .price { font-weight: 600; color: #cbd5e1; }
+        .quantity-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .qty-high { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .qty-low { background: rgba(239, 68, 68, 0.1); color: var(--danger); animation: pulse 2s infinite; }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: #111827;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            width: 100%;
+            max-width: 500px;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: #030712;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: white;
+            font-family: inherit;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 2000;
+        }
+
+        .toast {
+            background: #111827;
+            border: 1px solid var(--border);
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
 </head>
 <body>
-
-    <!-- HERO SECTION -->
-    <header class="hero-section" id="hero">
-        <div class="hero-overlay"></div>
-        <div class="container hero-content">
-            <div class="chip">🧠 Dựa Trên Khoa Học Thần Kinh</div>
-            <h1>Tái Lập Não Bộ<br>Trong 5 Ngày</h1>
-            <p class="subtitle">Chương trình đồng hành khoa học giúp bạn nhận diện stress, làm dịu não bộ và tái lập cuộc sống từng ngày một.</p>
-            
-            <div class="hero-stats">
-                <div class="stat-item">
-                    <h3>5</h3>
-                    <p>Ngày Chuyển Hóa</p>
-                </div>
-                <div class="stat-item">
-                    <h3>10+</h3>
-                    <p>Bài Tập Thực Hành</p>
-                </div>
-                <div class="stat-item">
-                    <h3>500+</h3>
-                    <p>Người Đã Thay Đổi</p>
-                </div>
+    <div class="container">
+        <header>
+            <h1>NaoBoKhoManh Admin</h1>
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                Hệ thống: Sẵn sàng
             </div>
+        </header>
 
-            <div class="hero-cta">
-                <a href="/thanh-toan" class="btn btn-primary">Đăng Ký Ngay - Chỉ 99k</a>
-            </div>
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('products', event)">Sản phẩm</button>
+            <button class="tab-btn" onclick="switchTab('customers', event)">Khách hàng</button>
+            <button class="tab-btn" onclick="switchTab('orders', event)">Đơn hàng</button>
         </div>
-    </header>
 
-    <!-- PROBLEM SECTION -->
-    <section class="problem-section" id="problem">
-        <div class="container">
-            <div class="section-heading">
-                <h4 class="text-orange">BẠN ĐANG GẶP PHẢI ĐIỀU NÀY?</h4>
-                <h2>Não Bộ Đang Gửi Tín Hiệu Cầu Cứu</h2>
-                <p>Căng thẳng kéo dài khiến não bộ hoạt động quá tải, dẫn đến những triệu chứng nghiêm trọng mà nhiều người không nhận ra.</p>
-            </div>
-
-            <div class="grid-cards">
-                <div class="card">
-                    <div class="card-icon">😰</div>
-                    <h3>Stress Mãn Tính</h3>
-                    <p class="pretty-text">Luôn trong trạng thái căng thẳng, lo lắng. Cơ thể như luôn trong tư thế "sẵn sàng chiến đấu" nhưng không bao giờ được nghỉ ngơi.</p>
-                </div>
-                <div class="card">
-                    <div class="card-icon">😴</div>
-                    <h3>Mất Ngủ Triền Miên</h3>
-                    <p class="pretty-text">Đêm nào cũng trằn trọc, suy nghĩ lung tung. Não bộ không tắt được dù cơ thể đã kiệt sức.</p>
-                </div>
-                <div class="card">
-                    <div class="card-icon">🤯</div>
-                    <h3>Quá Tải Thông Tin</h3>
-                    <p class="pretty-text">Không thể tập trung, hay quên, cảm giác như bộ não bị "đóng băng" trước quá nhiều công việc đang chờ xử lý.</p>
-                </div>
-                <div class="card">
-                    <div class="card-icon">😔</div>
-                    <h3>Kiệt Sức Cảm Xúc</h3>
-                    <p>Dễ cáu gắt, chán nản, không còn hứng thú với những điều từng làm mình vui vẻ.</p>
-                </div>
-                <div class="card">
-                    <div class="card-icon">💔</div>
-                    <h3>Cơ Thể Phản Kháng</h3>
-                    <p>Đau mỏi vai gáy liên tục, đau dạ dày, nhịp tim nhanh không rõ nguyên nhân.</p>
-                </div>
-                <div class="card">
-                    <div class="card-icon">😶</div>
-                    <h3>Mất Động Lực</h3>
-                    <p>Cảm thấy mắc kẹt, mất phương hướng và không biết bắt đầu lại từ đâu.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SOLUTION SECTION -->
-    <section class="solution-section" id="solution">
-        <div class="container solution-layout">
-            <div class="solution-image">
-                <div class="ebook-html-cover">
-                    <div class="cover-text-circle">
-                        <span class="cover-top">5 Ngày</span><br>
-                        <span class="cover-bottom">HIỂU CƠ THỂ</span>
-                    </div>
-                    <div class="cover-author">@vothuthuykbc</div>
-                </div>
-            </div>
-            <div class="solution-content">
-                <h4 class="text-purple">GIẢI PHÁP DÀNH CHO BẠN</h4>
-                <h2>Đồng Hành 5 Ngày Cùng Bạn Tái Lập Lại Não Bộ</h2>
-                <p>Không phải lý thuyết suông, đây là tấm bản đồ dựa trên khoa học để bạn ứng dụng thực tế. Mỗi ngày một bài thực hành nhỏ.</p>
-                
-                <ul class="curriculum-list">
-                    <li>
-                        <div class="day-badge">Ngày 1</div>
-                        <div>
-                            <strong>10 Dấu Hiệu Cơ Thể Đang Gồng</strong>
-                            <p>Nhận diện chính xác trạng thái báo động của cơ thể.</p>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="day-badge">Ngày 2</div>
-                        <div>
-                            <strong>Phím Nguồn: Làm Dịu Não</strong>
-                            <p>Các bài thực hành kích hoạt phó giao cảm đưa não về trạng thái nghỉ.</p>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="day-badge">Ngày 3</div>
-                        <div>
-                            <strong>Quy Tắc Ngón Tay Cái</strong>
-                            <p>Nghệ thuật xử lý vấn đề gọn gàng để não bộ không bị "kẹt xe".</p>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="day-badge">Ngày 4</div>
-                        <div>
-                            <strong>Hãy Là Chính Mình</strong>
-                            <p>Gỡ bỏ sự phán xét từ bên ngoài, giải phóng năng lượng kìm nén.</p>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="day-badge">Ngày 5</div>
-                        <div>
-                            <strong>Thời Gian Là Vàng Bạc</strong>
-                            <p>Quản trị năng lượng và tập trung để tái lập vòng lặp sống cân bằng.</p>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </section>
-
-    <!-- ASSESSMENT FORM SECTION -->
-    <section class="assessment-section" id="assessment-form">
-        <div class="container">
-            <div class="section-heading">
-                <h4 class="text-purple">BẢN ĐÁNH GIÁ CÁ NHÂN</h4>
-                <h2>Hãy Cho Chúng Tôi Biết Về Bạn</h2>
-                <p>Những câu trả lời của bạn sẽ giúp chúng tôi thiết kế lộ trình tái lập não bộ phù hợp nhất.</p>
-            </div>
-
-            <div class="form-card assessment-card">
-                <form id="assessmentForm">
-                    <!-- Thông tin cơ bản -->
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="assessment-name">Tên</label>
-                            <input type="text" id="assessment-name" name="name" placeholder="Ví dụ: Nguyễn Văn A" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="assessment-phone">Số điện thoại / Zalo</label>
-                            <input type="tel" id="assessment-phone" name="phone" placeholder="0912345678" required>
-                        </div>
-                    </div>
-
-                    <div class="form-divider"></div>
-
-                    <!-- Question 3 -->
-                    <div class="form-group">
-                        <label>Câu 1: Vấn đề nào đang ảnh hưởng đến bạn nhiều nhất?</label>
-                        <div class="checkbox-group">
-                            <label class="custom-checkbox">
-                                <input type="checkbox" name="question3" value="Mất tập trung khi làm việc/học tập">
-                                <span class="checkmark"></span>
-                                Mất tập trung khi làm việc/học tập
-                            </label>
-                            <label class="custom-checkbox">
-                                <input type="checkbox" name="question3" value="Mất ngủ, ngủ không sâu giấc">
-                                <span class="checkmark"></span>
-                                Mất ngủ, ngủ không sâu giấc
-                            </label>
-                            <label class="custom-checkbox">
-                                <input type="checkbox" name="question3" value="Lo âu, căng thẳng thường xuyên">
-                                <span class="checkmark"></span>
-                                Lo âu, căng thẳng thường xuyên
-                            </label>
-                            <label class="custom-checkbox">
-                                <input type="checkbox" name="question3" value="Dễ mệt mỏi, kiệt sức">
-                                <span class="checkmark"></span>
-                                Dễ mệt mỏi, kiệt sức
-                            </label>
-                            <label class="custom-checkbox">
-                                <input type="checkbox" name="question3" value="Cả những vấn đề trên">
-                                <span class="checkmark"></span>
-                                Cả những vấn đề trên
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Question 4 -->
-                    <div class="form-group">
-                        <label>Câu 2: Bạn đã thử giải pháp nào chưa?</label>
-                        <div class="checkbox-group">
-                            <label class="custom-checkbox">
-                                <input type="checkbox" name="question4" value="Chưa thử gì cả">
-                                <span class="checkmark"></span>
-                                Chưa thử gì cả
-                            </label>
-                            <label class="custom-checkbox">
-                                <input type="checkbox" name="question4" value="Đã thử thuốc/thực phẩm chức năng">
-                                <span class="checkmark"></span>
-                                Đã thử thuốc/thực phẩm chức năng
-                            </label>
-                            <label class="custom-checkbox">
-                                <input type="checkbox" name="question4" value="Đã tập thiền/yoga/thở">
-                                <span class="checkmark"></span>
-                                Đã tập thiền/yoga/thở
-                            </label>
-                            <label class="custom-checkbox">
-                                <input type="checkbox" name="question4" value="Đã đọc sách/tìm hiểu online">
-                                <span class="checkmark"></span>
-                                Đã đọc sách/tìm hiểu online
-                            </label>
-                            <label class="custom-checkbox">
-                                <input type="checkbox" name="question4" value="Đã gặp bác sĩ/chuyên gia">
-                                <span class="checkmark"></span>
-                                Đã gặp bác sĩ/chuyên gia
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Question 5 -->
-                    <div class="form-group">
-                        <label>Câu 3: Bạn muốn cải thiện điều gì trong 1 tháng tới?</label>
-                        <div class="checkbox-group">
-                            <label class="custom-checkbox">
-                                <input type="checkbox" name="question5" value="Ngủ ngon hơn">
-                                <span class="checkmark"></span>
-                                Ngủ ngon hơn
-                            </label>
-                            <label class="custom-checkbox">
-                                <input type="checkbox" name="question5" value="Tập trung tốt hơn">
-                                <span class="checkmark"></span>
-                                Tập trung tốt hơn
-                            </label>
-                            <label class="custom-checkbox">
-                                <input type="checkbox" name="question5" value="Bình tĩnh, ít lo âu hơn">
-                                <span class="checkmark"></span>
-                                Bình tĩnh, ít lo âu hơn
-                            </label>
-                            <label class="custom-checkbox">
-                                <input type="checkbox" name="question5" value="Tăng năng lượng, giảm mệt mỏi">
-                                <span class="checkmark"></span>
-                                Tăng năng lượng, giảm mệt mỏi
-                            </label>
-                            <label class="custom-checkbox">
-                                <input type="checkbox" name="question5" value="Tất cả những điều trên">
-                                <span class="checkmark"></span>
-                                Tất cả những điều trên
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-submit" id="assessmentSubmitBtn">Gửi Câu Trả Lời Ngay</button>
-                    </div>
-                    
-                    <div class="loader" id="assessmentLoader" style="display: none;"></div>
-                    
-                    <div class="success-message" id="assessmentSuccessMsg" style="display: none;">
-                        <div class="success-icon">✨</div>
-                        <h3>Hoàn thành đánh giá!</h3>
-                        <p>Cảm ơn bạn đã chia sẻ. Hãy nhấn nút bên dưới để gửi kết quả và nhận tư vấn trực tiếp từ chúng tôi.</p>
-                        <a href="https://zalo.me/0877057918" id="zaloAssessmentBtn" target="_blank" class="btn btn-zalo-confirm">💬 Gửi Kết Quả Qua Zalo Để Nhận Tư Vấn</a>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <!-- PRICING & FORM SECTION -->
-    <section class="pricing-section" id="booking-form">
-        <div class="container pricing-layout">
-            <div class="pricing-text">
-                <h2>Sẵn Sàng Cho Sự Thay Đổi?</h2>
-                <p>Chỉ với giá một bữa cafe, bạn sẽ có được công cụ chuyển hóa não bộ và cuộc sống trong 5 ngày.</p>
-                <div class="price-box">
-                    <span class="price-old">199.000đ</span>
-                    <span class="price-new">99.000đ</span>
-                </div>
-                <div class="contact-zalo">
-                    <p>Hoặc hỗ trợ trực tiếp qua Zalo:</p>
-                    <a href="https://zalo.me/0877057918" target="_blank" class="btn btn-zalo">💬 Nhắn Zalo: 0877057918</a>
-                </div>
-            </div>
-
-            <div class="form-card">
-                <h3>Đăng Ký Nhận Ebook Ngay</h3>
-                <form id="orderForm">
-                    <div class="form-group">
-                        <label for="fullname">Họ và Tên *</label>
-                        <input type="text" id="fullname" name="fullname" placeholder="Nguyễn Văn A" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="phone">Số điện thoại (Zalo) *</label>
-                        <input type="tel" id="phone" name="phone" placeholder="0912345678" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="email">Email *</label>
-                        <input type="email" id="email" name="email" placeholder="example@gmail.com" required>
-                    </div>
-
-                    <button type="submit" class="btn btn-submit" id="submitBtn">Xác Nhận Đăng Ký</button>
-                    <div class="loader" id="loader" style="display: none;"></div>
-                </form>
-                
-                <div class="payment-section" id="paymentSection" style="display: none;">
-                    <div class="success-alert">✅ Gửi thông tin thành công!</div>
-                    <p class="payment-desc">Vui lòng quét mã QR dưới đây để thanh toán mức giá ưu đãi <strong>99.000đ</strong>. Hệ thống sẽ tự động xác nhận và gửi Ebook cho bạn qua Zalo.</p>
-                    
-                    <div class="qr-box">
-                        <img src="" alt="Mã QR Thanh Toán" class="qr-image" id="qrImage">
-                    </div>
-                    
-                    <div class="bank-details">
-                        <p>Ngân hàng: <strong>MB Bank</strong></p>
-                        <p>Chủ tài khoản: <strong>LE BAO MINH CHAU</strong></p>
-                        <p>Số tài khoản: <strong>3530110082002</strong></p>
-                        <p>Số tiền: <strong class="text-purple">99.000đ</strong></p>
-                        
-                        <div class="transfer-note">
-                            <p class="note-title">📝 NỘI DUNG CHUYỂN KHOẢN</p>
-                            <p>Nội dung chuyển khoản gợi ý:</p>
-                            <div class="transfer-content-box">
-                                <strong id="transferContentDisplay">ebook [SĐT của bạn]</strong>
-                            </div>
-                            <small><em>💡 Nội dung này đã được điền sẵn trong mã QR. Bạn có thể tự chỉnh sửa nội dung chuyển tiền trong app ngân hàng nếu cần.</em></small>
-                        </div>
-                    </div>
-
-                    <a href="https://zalo.me/0877057918" id="zaloOrderBtn" target="_blank" class="btn btn-zalo-confirm">💬 Gửi Ảnh Chuyển Khoản Qua Zalo</a>
-                    <button class="btn btn-finish" id="finishBtn">Tôi Đã Chuyển Khoản Mua Ebook</button>
-                </div>
-            </div>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 Hành trình tái lập não bộ. Đã đăng ký bản quyền.</p>
-            <p>Email: hotro@diutamtri.com | Zalo: 0877057918</p>
-        </div>
-    </footer>
-
-    <!-- CHATBOT WIDGET -->
-    <div class="chatbot-widget" id="chatbotWidget">
-        <div class="chatbot-bubble" id="chatbotBubble">
-            <span class="bubble-icon">💬</span>
-            <span class="bubble-notification">1</span>
-        </div>
-        
-        <div class="chatbot-window" id="chatbotWindow">
-            <div class="chatbot-header">
-                <div class="chat-profile">
-                    <div class="profile-avatar">👩‍🏫</div>
-                    <div class="profile-info">
-                        <strong>Giảng viên (55 tuổi)</strong>
-                        <span>Đang trực tuyến</span>
-                    </div>
-                </div>
-                <button class="chat-close" id="chatClose">&times;</button>
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title" id="tabTitle">Quản lý Sản phẩm</h2>
+                <button class="btn btn-primary" onclick="showModal()">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    Thêm mới
+                </button>
             </div>
             
-            <div class="chat-body" id="chatBody">
-                <!-- Messages will appear here -->
-            </div>
-            
-            <div class="chat-footer" id="chatFooter">
-                <button class="scroll-arrow up hidden" id="scrollUp">▲</button>
-                <div class="options-grid" id="chatOptions">
-                    <!-- FAQ buttons will appear here -->
-                </div>
-                <button class="scroll-arrow down" id="scrollDown">▼</button>
+            <div style="overflow-x: auto;">
+                <table id="dataTable">
+                    <thead id="tableHead"></thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
             </div>
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="./main.js"></script>
+    <!-- Modal Form -->
+    <div class="modal" id="formModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Thêm Sản phẩm</h3>
+            </div>
+            <form id="dataForm">
+                <div id="formFields"></div>
+                <div style="display: flex; gap: 12px; margin-top: 32px;">
+                    <button type="submit" class="btn btn-primary" style="flex: 2">Lưu thông tin</button>
+                    <button type="button" class="btn btn-secondary" onclick="hideModal()" style="flex: 1">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="../config.js"></script>
+    <script>
+        let currentTab = 'products';
+        let items = [];
+
+        async function fetchData() {
+            try {
+                const res = await fetch(window.APP_CONFIG.API_BASE_URL + `/api/${currentTab}`);
+                items = await res.json();
+                renderTable();
+            } catch (err) { 
+                showToast('Lỗi khi tải dữ liệu!', 'danger');
+            }
+        }
+
+        function switchTab(tab, e) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            
+            const titles = {
+                'products': 'Quản lý Sản phẩm',
+                'customers': 'Danh sách Khách hàng',
+                'orders': 'Lịch sử Đơn hàng'
+            };
+            document.getElementById('tabTitle').innerText = titles[tab];
+            fetchData();
+        }
+
+        function renderTable() {
+            const thead = document.getElementById('tableHead');
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            if (currentTab === 'products') {
+                thead.innerHTML = `<tr><th>Tên sản phẩm</th><th>Đơn giá</th><th>Số lượng kho</th><th>Hành động</th></tr>`;
+                items.forEach(item => {
+                    tbody.innerHTML += `<tr>
+                        <td style="font-weight: 500">${item.name}</td>
+                        <td class="price">${item.price.toLocaleString()}đ</td>
+                        <td>
+                            <span class="quantity-badge ${item.quantity < 10 ? 'qty-low' : 'qty-high'}">${item.quantity}</span>
+                        </td>
+                        <td>
+                            <div style="display: flex; gap: 8px">
+                                <button class="btn btn-secondary" onclick="editItem(${item.id})">Sửa</button>
+                                <button class="btn btn-danger" onclick="deleteItem(${item.id})">Xóa</button>
+                            </div>
+                        </td>
+                    </tr>`;
+                });
+            } else if (currentTab === 'customers') {
+                thead.innerHTML = `<tr><th>Khách hàng</th><th>Liên hệ</th><th>Thông tin thêm</th><th>Hành động</th></tr>`;
+                items.forEach(item => {
+                    tbody.innerHTML += `<tr>
+                        <td>
+                            <div style="font-weight: 600">${item.name}</div>
+                            <div style="font-size: 13px; color: var(--text-muted)">ID: #${item.id}</div>
+                        </td>
+                        <td>
+                            <div>${item.phone}</div>
+                            <div style="font-size: 13px; color: var(--text-muted)">${item.email || '-'}</div>
+                        </td>
+                        <td><div style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-muted)">${item.notes || '-'}</div></td>
+                        <td>
+                            <div style="display: flex; gap: 8px">
+                                <button class="btn btn-secondary" onclick="editItem(${item.id})">Sửa</button>
+                                <button class="btn btn-danger" onclick="deleteItem(${item.id})">Xóa</button>
+                            </div>
+                        </td>
+                    </tr>`;
+                });
+            } else if (currentTab === 'orders') {
+                thead.innerHTML = `<tr><th>ID</th><th>Khách hàng</th><th>Sản phẩm</th><th>Tổng tiền</th><th>Trạng thái</th><th>Hành động</th></tr>`;
+                items.forEach(item => {
+                    const statusClass = item.status === 'confirmed' ? 'tag-success' : (item.status === 'pending' ? 'tag-pending' : 'tag-danger');
+                    tbody.innerHTML += `<tr>
+                        <td style="color: var(--text-muted)">#${item.id}</td>
+                        <td style="font-weight: 600">${item.customer_name || 'Khách lạ'}</td>
+                        <td>${item.product_name || 'SP đã xóa'}</td>
+                        <td class="price">${(item.amount || 0).toLocaleString()}đ</td>
+                        <td><span class="tag ${statusClass}">${item.status}</span></td>
+                        <td>
+                            <div style="display: flex; gap: 8px">
+                                <button class="btn btn-secondary" onclick="editItem(${item.id})">Sửa</button>
+                                <button class="btn btn-danger" onclick="deleteItem(${item.id})">Xóa</button>
+                            </div>
+                        </td>
+                    </tr>`;
+                });
+            }
+        }
+
+        async function showModal(id = null) {
+            const fields = document.getElementById('formFields');
+            const modalTitle = document.getElementById('modalTitle');
+            const form = document.getElementById('dataForm');
+            const modal = document.getElementById('formModal');
+            
+            form.reset();
+            form.dataset.id = id || '';
+            const item = id ? items.find(i => i.id === id) : {};
+
+            if (currentTab === 'products') {
+                modalTitle.innerText = id ? 'Chỉnh sửa Sản phẩm' : 'Thêm Sản phẩm';
+                fields.innerHTML = `
+                    <div class="form-group"><label>Tên sản phẩm</label><input name="name" value="${item.name || ''}" required placeholder="Nhập tên sản phẩm..."></div>
+                    <div class="form-group"><label>Đơn giá (VNĐ)</label><input type="number" name="price" value="${item.price || ''}" required></div>
+                    <div class="form-group"><label>Số lượng kho</label><input type="number" name="quantity" value="${item.quantity || ''}" required></div>
+                    <div class="form-group"><label>Mô tả ngắn</label><textarea name="description" rows="3">${item.description || ''}</textarea></div>
+                `;
+            } else if (currentTab === 'customers') {
+                modalTitle.innerText = id ? 'Chỉnh sửa Khách hàng' : 'Thêm Khách hàng';
+                fields.innerHTML = `
+                    <div class="form-group"><label>Họ và tên</label><input name="name" value="${item.name || ''}" required></div>
+                    <div class="form-group"><label>Số điện thoại</label><input name="phone" value="${item.phone || ''}" required></div>
+                    <div class="form-group"><label>Zalo (Tùy chọn)</label><input name="zalo" value="${item.zalo || ''}"></div>
+                    <div class="form-group"><label>Email</label><input type="email" name="email" value="${item.email || ''}"></div>
+                    <div class="form-group"><label>Ghi chú khách hàng</label><textarea name="notes" rows="3">${item.notes || ''}</textarea></div>
+                `;
+            } else if (currentTab === 'orders') {
+                modalTitle.innerText = id ? 'Cập nhật Đơn hàng' : 'Tạo Đơn hàng mới';
+                
+                if (id) {
+                    // Edit mode - only status and notes
+                    fields.innerHTML = `
+                        <div class="form-group"><label>Trạng thái đơn hàng</label>
+                            <select name="status">
+                                <option value="pending" ${item.status === 'pending' ? 'selected' : ''}>Chờ xử lý</option>
+                                <option value="confirmed" ${item.status === 'confirmed' ? 'selected' : ''}>Đã xác nhận</option>
+                                <option value="cancelled" ${item.status === 'cancelled' ? 'selected' : ''}>Đã hủy</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Ghi chú đơn hàng</label><textarea name="notes" rows="3">${item.notes || ''}</textarea></div>
+                    `;
+                } else {
+                    // Create mode - need to fetch data
+                    const [resC, resP] = await Promise.all([fetch(window.APP_CONFIG.API_BASE_URL + '/api/customers'), fetch(window.APP_CONFIG.API_BASE_URL + '/api/products')]);
+                    const customers = await resC.json();
+                    const products = await resP.json();
+                    
+                    fields.innerHTML = `
+                        <div class="form-group"><label>Chọn Khách hàng</label>
+                            <select name="customer_id" required>
+                                <option value="">-- Chọn khách hàng --</option>
+                                ${customers.map(c => `<option value="${c.id}">${c.name} (${c.phone})</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Chọn Sản phẩm</label>
+                            <select name="product_id" id="prodSelect" required onchange="updateOrderPrice(this)">
+                                <option value="">-- Chọn sản phẩm --</option>
+                                ${products.map(p => `<option value="${p.id}" data-price="${p.price}">[Kho: ${p.quantity}] ${p.name}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Tổng tiền thanh toán (VNĐ)</label><input type="number" id="orderAmount" name="amount" required></div>
+                        <div class="form-group"><label>Ghi chú</label><textarea name="notes" rows="2"></textarea></div>
+                        <div style="background: rgba(129, 140, 248, 0.1); padding: 12px; border-radius: 8px; font-size: 13px; color: var(--primary);">
+                            ℹ️ Khi tạo đơn, hệ thống sẽ tự động trừ 1 vào số lượng kho.
+                        </div>
+                    `;
+                }
+            }
+            
+            modal.classList.add('show');
+        }
+
+        function updateOrderPrice(select) {
+            const price = select.options[select.selectedIndex].dataset.price;
+            if (price) document.getElementById('orderAmount').value = price;
+        }
+
+        function hideModal() {
+            document.getElementById('formModal').classList.remove('show');
+        }
+
+        document.getElementById('dataForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            if (e.target.dataset.id) data.id = e.target.dataset.id;
+
+            try {
+                const res = await fetch(window.APP_CONFIG.API_BASE_URL + `/api/${currentTab}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                if (result.success) {
+                    showToast(e.target.dataset.id ? 'Đã cập nhật thành công!' : 'Đã thêm thành công!', 'success');
+                    hideModal();
+                    fetchData();
+                } else {
+                    showToast(result.error || 'Thao tác thất bại!', 'danger');
+                }
+            } catch (err) {
+                showToast('Lỗi kết nối máy chủ!', 'danger');
+            }
+        };
+
+        async function deleteItem(id) {
+            if (!confirm('Bạn có chắc chắn muốn xóa mục này?')) return;
+            try {
+                const res = await fetch(window.APP_CONFIG.API_BASE_URL + '/api/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ table: currentTab, id: id })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    showToast('Đã xóa dữ liệu thành công.', 'success');
+                    fetchData();
+                } else {
+                    showToast('Lỗi khi xóa dữ liệu!', 'danger');
+                }
+            } catch (err) {
+                showToast('Lỗi kết nối!', 'danger');
+            }
+        }
+
+        function editItem(id) { showModal(id); }
+
+        function showToast(msg, type) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            const color = type === 'success' ? 'var(--success)' : 'var(--danger)';
+            toast.innerHTML = `
+                <div style="width: 4px; height: 24px; background: ${color}; border-radius: 2px"></div>
+                <div style="flex: 1">${msg}</div>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Initialize
+        fetchData();
+    </script>
 </body>
 </html>
