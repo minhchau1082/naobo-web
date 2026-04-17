@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh Toán | NaoBoKhoManh</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #818cf8;
+            --primary-hover: #6366f1;
+            --bg: #030712;
+            --surface: rgba(17, 24, 39, 0.85);
+            --border: rgba(255, 255, 255, 0.1);
+            --text: #f9fafb;
+            --text-muted: #9ca3af;
+            --success: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* ---- STEP INDICATOR ---- */
+        .steps-bar {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 32px;
+            width: 100%;
+            max-width: 520px;
+        }
+        .step-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative;
+        }
+        .step-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 14px;
+            left: 50%;
+            width: 100%;
+            height: 2px;
+            background: var(--border);
+            z-index: 0;
+            transition: background 0.4s;
+        }
+        .step-item.done:not(:last-child)::after { background: var(--success); }
+
+        .step-circle {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+            border: 2px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 700;
+            z-index: 1;
+            transition: all 0.4s;
+        }
+        .step-item.active .step-circle { border-color: var(--primary); background: rgba(129, 140, 248, 0.2); color: var(--primary); }
+        .step-item.done .step-circle  { border-color: var(--success); background: var(--success); color: white; }
+        .step-label { font-size: 11px; color: var(--text-muted); margin-top: 6px; font-weight: 500; }
+        .step-item.active .step-label { color: var(--primary); }
+        .step-item.done .step-label  { color: var(--success); }
+
+        /* ---- MAIN LAYOUT ---- */
+        .checkout-container {
+            width: 100%;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 24px;
+        }
+        @media (max-width: 768px) {
+            .checkout-container { grid-template-columns: 1fr; }
+        }
+
+        /* ---- SUCCESS FULL WIDTH ---- */
+        .success-wrapper {
+            display: none;
+            width: 100%;
+            max-width: 520px;
+            animation: zoomIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .success-card {
+            background: var(--surface);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px 36px;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+        }
+        .success-check {
+            width: 72px; height: 72px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.5);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 30px;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(16,185,129,0.5); }
+            50%       { box-shadow: 0 0 40px rgba(16,185,129,0.8); }
+        }
+        .success-title { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+        .success-sub { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 28px; }
+
+        .order-info-table {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            text-align: left;
+            margin-bottom: 24px;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { color: var(--text-muted); }
+        .info-value { font-weight: 600; text-align: right; max-width: 60%; }
+        .badge-success {
+            background: var(--success-bg);
+            color: var(--success);
+            border: 1px solid rgba(16,185,129,0.3);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* ---- CARD ---- */
+        .card {
+            background: var(--surface);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        h1 { font-size: 22px; margin-bottom: 24px; font-weight: 700; color: var(--primary); }
+        h2 { font-size: 18px; margin-bottom: 16px; font-weight: 600; }
+
+        .form-group { margin-bottom: 16px; }
+        label { display: block; margin-bottom: 8px; font-size: 14px; color: var(--text-muted); }
+        input, select, textarea {
+            width: 100%; padding: 12px 16px;
+            background: #030712; border: 1px solid var(--border);
+            border-radius: 12px; color: white; font-family: inherit; font-size: 14px;
+        }
+        input:focus, select:focus { border-color: var(--primary); outline: none; }
+        textarea { resize: none; }
+
+        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; font-size: 16px; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); }
+        .btn-zalo { background: #25d366; color: white; }
+
+        /* ---- SUMMARY ---- */
+        .summary-card { background: rgba(255,255,255,0.02); border: 1px dashed var(--border); }
+        .product-item { display: flex; justify-content: space-between; margin-bottom: 12px; font-weight: 500; font-size: 15px; }
+        .total-price { font-size: 20px; font-weight: 700; color: var(--primary); border-top: 1px solid var(--border); padding-top: 14px; display: flex; justify-content: space-between; margin-top: 12px; }
+
+        /* ---- PAYMENT ---- */
+        #paymentSection { display: none; text-align: center; animation: fadeIn 0.4s; }
+        .qr-box { background: white; padding: 16px; border-radius: 16px; margin: 16px auto; width: 210px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .qr-image { width: 100%; display: block; }
+        .transfer-content { background: rgba(129, 140, 248, 0.1); border: 1px solid var(--primary); padding: 12px; border-radius: 12px; margin-top: 12px; font-weight: 700; color: var(--primary); font-size: 17px; letter-spacing: 1px; }
+        .bank-info { margin-top: 16px; text-align: left; font-size: 13px; background: rgba(255,255,255,0.04); padding: 14px; border-radius: 12px; line-height: 2; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn  { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
+
+        .loader { width: 22px; height: 22px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s linear infinite; display: none; margin: 0 auto; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <!-- STEP INDICATOR -->
+    <div class="steps-bar" id="stepsBar">
+        <div class="step-item active" id="step1">
+            <div class="step-circle">1</div>
+            <div class="step-label">Thông tin</div>
+        </div>
+        <div class="step-item" id="step2">
+            <div class="step-circle">2</div>
+            <div class="step-label">Thanh toán</div>
+        </div>
+        <div class="step-item" id="step3">
+            <div class="step-circle">3</div>
+            <div class="step-label">Hoàn thành</div>
+        </div>
+    </div>
+
+    <!-- CHECKOUT FORM (2 columns) -->
+    <div class="checkout-container" id="checkoutWrapper">
+
+        <!-- Left: Form -->
+        <div class="card" id="formCard">
+            <h1>Thông tin đặt hàng</h1>
+            <form id="checkoutForm">
+                <div class="form-group">
+                    <label>Sản phẩm bạn chọn</label>
+                    <select id="productSelect" name="product_id" required onchange="updateSummary()">
+                        <option value="">Đang tải sản phẩm...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Họ và tên</label>
+                    <input type="text" id="nameInput" name="name" placeholder="Nguyễn Văn A" required>
+                </div>
+                <div class="form-group">
+                    <label>Số điện thoại (Zalo nhận hàng)</label>
+                    <input type="tel" name="phone" placeholder="0912345678" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" placeholder="email@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Ghi chú (Tùy chọn)</label>
+                    <textarea name="notes" rows="2" placeholder="Lời nhắn cho chúng tôi..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <span id="btnText">Tiếp tục thanh toán →</span>
+                    <div class="loader" id="loader"></div>
+                </button>
+            </form>
+        </div>
+
+        <!-- Right: Summary / QR -->
+        <div class="card summary-card" id="sideCard">
+            <div id="summaryContent">
+                <h2>Tóm tắt đơn hàng</h2>
+                <div id="selectedProductInfo">
+                    <p style="color: var(--text-muted); font-size: 14px;">Vui lòng chọn sản phẩm để xem chi tiết.</p>
+                </div>
+                <div class="total-price" id="totalPriceBox">
+                    <span>Tổng cộng:</span>
+                    <span id="totalDisplay">0đ</span>
+                </div>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: 14px;">* Sản phẩm sẽ được gửi tự động qua Zalo ngay sau khi thanh toán thành công.</p>
+            </div>
+
+            <div id="paymentSection">
+                <h2 style="color: var(--success);">✅ Đã khởi tạo đơn hàng!</h2>
+                <p style="font-size: 13px; color: var(--text-muted);">Quét mã QR bằng ứng dụng ngân hàng để hoàn tất:</p>
+                <div class="qr-box">
+                    <img id="qrImage" class="qr-image" src="" alt="Mã QR VietQR">
+                </div>
+                <p style="font-size: 12px; color: var(--text-muted);">Nội dung chuyển khoản:</p>
+                <div class="transfer-content" id="transferContent">NBKM XXXX</div>
+                <div class="bank-info">
+                    <p>🏦 Ngân hàng: <strong>MB Bank</strong></p>
+                    <p>👤 Chủ TK: <strong>LE BAO MINH CHAU</strong></p>
+                    <p>🔢 Số TK: <strong>3530110082002</strong></p>
+                </div>
+                <button class="btn btn-zalo" style="margin-top: 16px;" onclick="window.open('https://zalo.me/0877057918')">
+                    💬 Đã chuyển khoản - Nhắn Zalo ngay
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUCCESS SCREEN (full width, shown after payment confirmed) -->
+    <div class="success-wrapper" id="successWrapper">
+        <div class="success-card">
+            <div class="success-check">✓</div>
+            <div class="success-title">Thanh toán thành công! 🎉</div>
+            <p class="success-sub">Cảm ơn bạn đã tin tưởng NaoBoKhoManh!<br>Chúng tôi sẽ liên hệ xác nhận qua điện thoại sớm nhất.</p>
+
+            <div class="order-info-table">
+                <div class="info-row">
+                    <span class="info-label">Mã đơn hàng</span>
+                    <span class="info-value" id="successOrderId">—</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Sản phẩm</span>
+                    <span class="info-value" id="successProduct">—</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Khách hàng</span>
+                    <span class="info-value" id="successCustomer">—</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Số tiền</span>
+                    <span class="info-value" id="successAmount">—</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Trạng thái</span>
+                    <span class="badge-success">✅ Đã thanh toán</span>
+                </div>
+            </div>
+
+            <button class="btn btn-zalo" onclick="window.open('https://zalo.me/0877057918')">
+                💬 Nhắn Zalo để nhận sản phẩm
+            </button>
+        </div>
+    </div>
+
+    <script src="../config.js"></script>
+    <script>
+        let products = [];
+        let orderData = {};
+        const BANK_ID = "MB";
+        const ACCOUNT_NO = "3530110082002";
+        const ACCOUNT_NAME = "LE BAO MINH CHAU";
+
+        // Load Products
+        async function loadProducts() {
+            try {
+                const res = await fetch(window.APP_CONFIG.API_BASE_URL + '/api/public/products');
+                products = await res.json();
+                const select = document.getElementById('productSelect');
+                select.innerHTML = '<option value="">-- Chọn sản phẩm --</option>' +
+                    products.map(p => `<option value="${p.id}">${p.name} - ${p.price.toLocaleString()}đ</option>`).join('');
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const prodId = urlParams.get('product_id');
+                if (prodId) { select.value = prodId; updateSummary(); }
+            } catch (err) { console.error(err); }
+        }
+
+        function updateSummary() {
+            const id = document.getElementById('productSelect').value;
+            const product = products.find(p => p.id == id);
+            if (product) {
+                document.getElementById('selectedProductInfo').innerHTML = `
+                    <div class="product-item"><span>${product.name}</span><span>${product.price.toLocaleString()}đ</span></div>`;
+                document.getElementById('totalDisplay').innerText = product.price.toLocaleString() + 'đ';
+            } else {
+                document.getElementById('selectedProductInfo').innerHTML = '<p style="color:var(--text-muted);font-size:14px">Vui lòng chọn sản phẩm.</p>';
+                document.getElementById('totalDisplay').innerText = '0đ';
+            }
+        }
+
+        document.getElementById('checkoutForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submitBtn');
+            const loader    = document.getElementById('loader');
+            const btnText   = document.getElementById('btnText');
+            const formData  = new FormData(e.target);
+            const data      = Object.fromEntries(formData.entries());
+
+            submitBtn.disabled = true;
+            btnText.style.display = 'none';
+            loader.style.display  = 'block';
+
+            try {
+                const res    = await fetch(window.APP_CONFIG.API_BASE_URL + '/api/public/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                if (result.success) {
+                    // Save order data for success screen
+                    const product = products.find(p => p.id == data.product_id);
+                    orderData = {
+                        order_id:     result.order_id,
+                        product_name: product ? product.name : data.product_id,
+                        customer:     data.name,
+                        amount:       result.amount
+                    };
+                    showPayment(result.order_id, result.amount);
+                } else {
+                    alert(result.error || "Có lỗi xảy ra, vui lòng thử lại.");
+                    submitBtn.disabled = false;
+                    btnText.style.display = 'block';
+                    loader.style.display  = 'none';
+                }
+            } catch (err) {
+                alert("Lỗi kết nối máy chủ.");
+                submitBtn.disabled = false;
+                btnText.style.display = 'block';
+                loader.style.display  = 'none';
+            }
+        };
+
+        function setStep(step) {
+            // step: 1 = info, 2 = payment, 3 = done
+            for (let i = 1; i <= 3; i++) {
+                const el = document.getElementById('step' + i);
+                el.classList.remove('active', 'done');
+                if (i < step)  el.classList.add('done');
+                if (i === step) el.classList.add('active');
+            }
+        }
+
+        function showPayment(orderId, amount) {
+            document.getElementById('checkoutForm').style.display  = 'none';
+            document.getElementById('summaryContent').style.display = 'none';
+            document.getElementById('paymentSection').style.display = 'block';
+            setStep(2);
+
+            const content = `NBKM ${orderId}`;
+            document.getElementById('transferContent').innerText = content;
+            const qrUrl = `https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-compact2.png?amount=${amount}&addInfo=${encodeURIComponent(content)}&accountName=${encodeURIComponent(ACCOUNT_NAME)}`;
+            document.getElementById('qrImage').src = qrUrl;
+
+            startPolling(orderId);
+        }
+
+        function startPolling(orderId) {
+            const pollInterval = setInterval(async () => {
+                try {
+                    const res  = await fetch(window.APP_CONFIG.API_BASE_URL + `/api/public/order-status?id=${orderId}`);
+                    const data = await res.json();
+                    if (data.status === 'confirmed' || data.status === 'success') {
+                        clearInterval(pollInterval);
+                        showSuccess();
+                    }
+                } catch (err) { console.error("Polling error:", err); }
+            }, 3000);
+        }
+
+        function showSuccess() {
+            // Hide checkout grid and steps
+            document.getElementById('checkoutWrapper').style.display = 'none';
+            setStep(3);
+
+            // Fill success info
+            document.getElementById('successOrderId').innerText  = 'NBKM' + orderData.order_id;
+            document.getElementById('successProduct').innerText  = orderData.product_name;
+            document.getElementById('successCustomer').innerText = orderData.customer;
+            document.getElementById('successAmount').innerText   = Number(orderData.amount).toLocaleString() + 'đ';
+
+            // Show success screen
+            document.getElementById('successWrapper').style.display = 'block';
+        }
+
+        loadProducts();
+    </script>
+</body>
+</html>
