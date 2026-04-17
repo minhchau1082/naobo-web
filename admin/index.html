@@ -462,6 +462,7 @@
             } else if (currentTab === 'customers') {
                 thead.innerHTML = `<tr><th>Khách hàng</th><th>SĐT</th><th>Email</th><th>Thông tin thêm</th><th>Hành động</th></tr>`;
                 items.forEach(item => {
+                    tbody.innerHTML += `<tr>
                         <td>
                             <div style="font-weight: 600">${item.name}</div>
                             <div style="font-size: 13px; color: var(--text-muted)">ID: #${item.id}</div>
