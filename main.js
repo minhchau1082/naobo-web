@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const payload = {
                 "Tên": formData.get('name'),
                 "SĐT_Zalo": formData.get('phone'),
+                "Email": formData.get('email'),
                 "Câu 1 (Vấn đề)": q3Values.join(', '),
                 "Câu 2 (Giải pháp đã thử)": q4Values.join(', '),
                 "Câu 3 (Mục tiêu)": q5Values.join(', ')
