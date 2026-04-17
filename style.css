@@ -131,7 +131,7 @@ p {
     justify-content: center;
     text-align: center;
     /* User wanted the image as background */
-    background: url('./assets/bg_brain.png') no-repeat center center;
+    background: url('./bg_brain.png') no-repeat center center;
     background-size: cover;
 }
 
@@ -260,7 +260,7 @@ p {
     box-shadow: -5px 0 10px rgba(0,0,0,0.2) inset, 15px 20px 40px rgba(0,0,0,0.3);
     position: relative;
     overflow: hidden;
-    background: url('./assets/bg_brain.png') no-repeat center center;
+    background: url('./bg_brain.png') no-repeat center center;
     background-size: cover;
     display: flex;
     flex-direction: column;
