@@ -208,7 +208,8 @@ class AdminHandler(BaseHTTPRequestHandler):
             elif path == '/api/sepay-webhook':
                 # KIỂM TRA BẢO MẬT: Chỉ cho phép SePay gửi dữ liệu
                 auth_header = self.headers.get('Authorization', '')
-                token = auth_header.replace('Bearer ', '') if 'Bearer ' in auth_header else auth_header
+                # Xóa tiền tố Bearer hoặc Apikey nếu có để lấy đúng token gốc
+                token = auth_header.replace('Bearer ', '').replace('Apikey ', '')
                 
                 if SEPAY_WEBHOOK_TOKEN and token != SEPAY_WEBHOOK_TOKEN:
                     self._send_response({"success": False, "message": "Unauthorized - Invalid Webhook Token"}, 401)
